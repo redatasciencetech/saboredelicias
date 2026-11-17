@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-template="classic">
+<html lang="pt-BR" data-template="sabor-classic">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lanchonete Pro — Cardápio Digital, PDV & Gestão</title>
+    <title>Sabor e Delícias — Comidas com Sabor Venezuelano | Cardápio & Gestão</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,46 +22,47 @@
     <style>
         /* =========================================================
            SISTEMA DE TEMPLATES VISUAIS (CSS CUSTOM PROPERTIES)
+           Padrão: Sabor & Delícias Clássico (Vermelho, Dourado & Carvão)
            ========================================================= */
         :root,
-        html[data-template="classic"] {
-            --bg-app: #f8fafc;
+        html[data-template="sabor-classic"] {
+            --bg-app: #faf7f5;
             --bg-surface: #ffffff;
-            --bg-subtle: #f1f5f9;
-            --border-color: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --brand-primary: #dc2626;
-            --brand-primary-hover: #b91c1c;
-            --brand-secondary: #f59e0b;
-            --brand-soft: rgba(220, 38, 38, 0.10);
+            --bg-subtle: #f3ece7;
+            --border-color: #e6d8cf;
+            --text-main: #181210;
+            --text-muted: #5c4d45;
+            --brand-primary: #d91c1c;
+            --brand-primary-hover: #b31414;
+            --brand-accent: #facc15;
+            --brand-soft: rgba(217, 28, 28, 0.10);
             --brand-on-primary: #ffffff;
         }
 
         html[data-template="gourmet-dark"] {
-            --bg-app: #0f172a;
-            --bg-surface: #1e293b;
-            --bg-subtle: #0b1120;
-            --border-color: #334155;
+            --bg-app: #0f1115;
+            --bg-surface: #181b22;
+            --bg-subtle: #222630;
+            --border-color: #2f3542;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #9ca3af;
             --brand-primary: #f59e0b;
             --brand-primary-hover: #d97706;
-            --brand-secondary: #fbbf24;
+            --brand-accent: #ef4444;
             --brand-soft: rgba(245, 158, 11, 0.16);
-            --brand-on-primary: #0f172a;
+            --brand-on-primary: #0f1115;
         }
 
         html[data-template="natural-fresh"] {
-            --bg-app: #f3f7f4;
+            --bg-app: #f3f8f5;
             --bg-surface: #ffffff;
-            --bg-subtle: #e6f0ea;
-            --border-color: #cde0d3;
-            --text-main: #143326;
-            --text-muted: #4a6b5c;
+            --bg-subtle: #e5f1ea;
+            --border-color: #cbe2d4;
+            --text-main: #122e22;
+            --text-muted: #466959;
             --brand-primary: #059669;
             --brand-primary-hover: #047857;
-            --brand-secondary: #10b981;
+            --brand-accent: #f59e0b;
             --brand-soft: rgba(5, 150, 105, 0.12);
             --brand-on-primary: #ffffff;
         }
@@ -75,7 +76,7 @@
             --text-muted: #78350f;
             --brand-primary: #9a3412;
             --brand-primary-hover: #7c2d12;
-            --brand-secondary: #d97706;
+            --brand-accent: #f59e0b;
             --brand-soft: rgba(154, 52, 18, 0.12);
             --brand-on-primary: #ffffff;
         }
@@ -105,7 +106,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Alerta visual pedido atrasado no KDS */
+        /* Alerta visual pedido atrasado no KDS (>15 min) */
         @keyframes pulse-late {
             0%, 100% { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25); }
             50% { border-color: rgba(239, 68, 68, 0.35); box-shadow: none; }
@@ -173,7 +174,7 @@
 </head>
 <body class="antialiased overflow-x-hidden">
 
-    <!-- ÁREAS OCULTAS PARA IMPRESSÃO -->
+    <!-- ÁREAS OCULTAS PARA IMPRESSÃO TÉRMICA & QR CODES -->
     <div id="thermal-print-area"></div>
     <div id="qr-print-area"></div>
 
@@ -184,25 +185,25 @@
              AMBIENTE 1: MODO CLIENTE (#cliente) — 100% LIMPO E PÚBLICO
              ========================================================= -->
         <div id="view-cliente" class="hidden flex-1 flex flex-col">
-            <!-- Topbar Exclusiva do Consumidor (Sem nenhum link administrativo) -->
+            <!-- Topbar Exclusiva do Consumidor (Sem botões administrativos) -->
             <header class="sticky top-0 z-30 bg-surface/95 backdrop-blur-md border-b border-theme shadow-sm">
-                <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3 min-w-0">
                         <div id="cli-header-logo" class="flex-shrink-0"></div>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <h1 id="cli-store-name" class="font-extrabold text-base sm:text-lg text-main truncate">Lanchonete da Mãe</h1>
-                                <span id="cli-open-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600">● Aberto</span>
+                                <h1 id="cli-store-name" class="font-extrabold text-base sm:text-lg text-main truncate">Sabor e Delícias</h1>
+                                <span id="cli-open-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 flex-shrink-0">● Aberto</span>
                             </div>
-                            <p id="cli-store-slogan" class="text-xs text-muted truncate">O sabor caseiro que conquista na primeira mordida!</p>
+                            <p id="cli-store-slogan" class="text-xs text-muted truncate">Comidas com sabor venezuelano</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
-                        <!-- Botão Meus Pedidos (Apenas pedidos desta sessão do cliente) -->
+                        <!-- Botão Meus Pedidos (Acompanhamento em Tempo Real desta sessão) -->
                         <button onclick="openMyOrdersModal()" id="cli-my-orders-btn" class="hidden px-3 py-1.5 rounded-xl bg-brand-soft text-brand text-xs font-bold flex items-center gap-1.5 border border-brand/20">
                             <i class="fa-solid fa-receipt"></i>
-                            <span data-i18n="my_orders">Meus Pedidos</span>
+                            <span class="hidden sm:inline" data-i18n="my_orders">Meus Pedidos</span>
                             <span id="cli-my-orders-count" class="bg-brand text-on-brand px-1.5 rounded-full text-[10px]">0</span>
                         </button>
 
@@ -215,22 +216,27 @@
                 </div>
             </header>
 
-            <!-- Hero & Informações da Loja -->
-            <main class="max-w-4xl w-full mx-auto px-4 pt-4 pb-28 flex-1 space-y-5">
-                <!-- Banner Capa -->
-                <div class="relative rounded-3xl overflow-hidden h-40 sm:h-52 border border-theme shadow-md">
-                    <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=80" alt="Banner" onerror="this.src='https://placehold.co/1200x400/dc2626/ffffff?text=Lanchonete+Pro'" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-4 sm:p-6">
-                        <span id="cli-promo-banner" class="inline-block w-fit bg-brand text-on-brand text-xs font-extrabold px-3 py-1 rounded-full mb-1.5 shadow">
-                            🔥 Cupom BEMVINDO10 = 10% OFF!
-                        </span>
-                        <p id="cli-store-address" class="text-white/90 text-xs flex items-center gap-1.5">
-                            <i class="fa-solid fa-location-dot text-amber-400"></i> Rua dos Sabores, 450 - Centro
+            <!-- Hero & Vitrine Digital -->
+            <main class="max-w-5xl w-full mx-auto px-4 pt-4 pb-28 flex-1 space-y-5">
+                <!-- Banner Capa Sabor e Delícias -->
+                <div class="relative rounded-3xl overflow-hidden h-44 sm:h-56 border border-theme shadow-md bg-neutral-950">
+                    <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=80" alt="Sabor e Delícias" onerror="this.src='https://placehold.co/1200x400/d91c1c/facc15?text=Sabor+e+Delicias'" class="w-full h-full object-cover opacity-75">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-4 sm:p-6">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1.5 bg-amber-400 text-neutral-950 text-xs font-extrabold px-3 py-1 rounded-full shadow">
+                                🇻🇪 <span data-i18n="venezuelan_tag">Sabor Venezuelano Autêntico</span>
+                            </span>
+                            <span class="inline-block bg-brand text-on-brand text-xs font-extrabold px-3 py-1 rounded-full shadow">
+                                🔥 Cupom SABOR10 = 10% OFF!
+                            </span>
+                        </div>
+                        <p id="cli-store-address" class="text-white/95 text-xs sm:text-sm font-medium flex items-center gap-1.5">
+                            <i class="fa-solid fa-location-dot text-amber-400"></i> Av. Brasil, 381 - Bela Vista, São José - SC
                         </p>
                     </div>
                 </div>
 
-                <!-- Indicadores Rápidos (Tempo, Taxa, Avaliação) -->
+                <!-- Indicadores Rápidos (Tempo, Taxa, WhatsApp) -->
                 <div class="grid grid-cols-3 gap-2.5 text-center">
                     <div class="bg-surface p-3 rounded-2xl border border-theme shadow-sm">
                         <span class="text-[11px] text-muted block" data-i18n="delivery_time_label">Tempo Estimado</span>
@@ -242,7 +248,7 @@
                     </div>
                     <div class="bg-surface p-3 rounded-2xl border border-theme shadow-sm">
                         <span class="text-[11px] text-muted block" data-i18n="rating_label">Avaliação</span>
-                        <strong class="text-xs sm:text-sm font-extrabold text-amber-500">★ 4.9 (320+)</strong>
+                        <strong class="text-xs sm:text-sm font-extrabold text-amber-500">★ 4.9 (480+)</strong>
                     </div>
                 </div>
 
@@ -250,15 +256,15 @@
                 <div class="space-y-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
-                        <input type="text" id="cli-search-input" oninput="renderCustomerMenu()" data-i18n-placeholder="search_placeholder" placeholder="Buscar lanche, combo ou bebida..."
+                        <input type="text" id="cli-search-input" oninput="renderCustomerMenu()" data-i18n-placeholder="search_placeholder" placeholder="Buscar empanada, pastel, hambúrguer ou bebida..."
                             class="w-full bg-surface text-main placeholder:text-muted text-sm rounded-2xl pl-11 pr-4 py-3 border border-theme focus:outline-none focus:border-brand shadow-sm">
                     </div>
 
                     <div id="cli-categories-bar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
                 </div>
 
-                <!-- Lista de Produtos Categorizados -->
-                <div id="cli-products-container" class="space-y-7"></div>
+                <!-- Lista de Produtos Categorizados (34 Itens) -->
+                <div id="cli-products-container" class="space-y-8"></div>
             </main>
 
             <!-- Barra Flutuante da Sacola do Cliente -->
@@ -274,8 +280,8 @@
 
             <!-- Rodapé Discreto com Único Link para Área Restrita (#painel) -->
             <footer class="border-t border-theme bg-surface py-5 px-4 text-center text-xs text-muted">
-                <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-                    <span id="cli-footer-copy">© 2026 Lanchonete da Mãe</span>
+                <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <span id="cli-footer-copy">© 2026 Sabor e Delícias • Av. Brasil, 381 - Bela Vista, São José - SC</span>
                     <button onclick="switchRoute('painel')" class="text-muted hover:text-brand transition-colors font-semibold flex items-center gap-1.5">
                         <span>🔒</span>
                         <span data-i18n="restricted_area">Área Restrita / Painel</span>
@@ -301,10 +307,10 @@
                     </div>
                 </div>
 
-                <!-- Identidade do Restaurante -->
+                <!-- Identidade Sabor e Delícias -->
                 <div class="text-center space-y-2">
                     <div id="login-brand-logo" class="flex justify-center"></div>
-                    <h2 id="login-store-name" class="text-xl font-extrabold text-main">Lanchonete da Mãe</h2>
+                    <h2 id="login-store-name" class="text-xl font-extrabold text-main">Sabor e Delícias</h2>
                     <p class="text-xs text-muted" data-i18n="login_subtitle">Acesso Restrito • Digite seu PIN de Operador ou Gerente</p>
                 </div>
 
@@ -321,7 +327,7 @@
                     </button>
                 </form>
 
-                <!-- Acesso Rápido Demonstração (4 Níveis RBAC) -->
+                <!-- Acesso Rápido Demonstração (4 Perfis RBAC) -->
                 <div class="pt-4 border-t border-theme space-y-2.5">
                     <p class="text-[11px] font-bold uppercase tracking-wider text-muted text-center" data-i18n="demo_quick_access">
                         Acesso Rápido por Perfil (Demonstração)
@@ -360,7 +366,7 @@
                         <div id="adm-header-logo" class="flex-shrink-0"></div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <span id="adm-store-name" class="font-extrabold text-sm sm:text-base text-main">Lanchonete da Mãe</span>
+                                <span id="adm-store-name" class="font-extrabold text-sm sm:text-base text-main">Sabor e Delícias</span>
                                 <span id="adm-role-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-soft text-brand border border-brand/25">
                                     👑 Dono / Gerente
                                 </span>
@@ -469,7 +475,7 @@
                         <!-- Pagamento & Totais -->
                         <div class="space-y-2.5 text-xs">
                             <div class="flex gap-1.5">
-                                <input type="text" id="pdv-coupon-input" placeholder="Cupom (BEMVINDO10)" class="flex-1 bg-subtle uppercase font-mono rounded-xl px-3 py-1.5 border border-theme">
+                                <input type="text" id="pdv-coupon-input" placeholder="Cupom (SABOR10)" class="flex-1 bg-subtle uppercase font-mono rounded-xl px-3 py-1.5 border border-theme">
                                 <button onclick="applyPdvCoupon()" class="px-3 py-1.5 rounded-xl bg-subtle border border-theme font-bold text-main" data-i18n="apply">Aplicar</button>
                             </div>
 
@@ -502,7 +508,7 @@
                             </div>
 
                             <div class="flex gap-2 pt-1">
-                                <button id="pdv-send-table-btn" onclick="launchPdvToTable()" class="hidden flex-1 bg-amber-500 text-white font-bold py-3 rounded-xl text-xs" data-i18n="send_to_table">Lançar Mesa</button>
+                                <button id="pdv-send-table-btn" onclick="launchPdvToTable()" class="hidden flex-1 bg-amber-500 text-neutral-950 font-extrabold py-3 rounded-xl text-xs" data-i18n="send_to_table">Lançar Mesa</button>
                                 <button onclick="finalizePdvOrder()" class="flex-1 bg-brand text-on-brand font-extrabold py-3 rounded-xl text-xs shadow-md flex items-center justify-center gap-1.5">
                                     <i class="fa-solid fa-print"></i>
                                     <span data-i18n="finish_and_print">Finalizar & Imprimir</span>
@@ -611,48 +617,57 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                            <!-- Template 1: Clássico Fast-Food -->
-                            <button onclick="setVisualTemplate('classic')" data-tpl-card="classic" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#f8fafc] text-[#0f172a]">
+                            <!-- Template 1: Sabor & Delícias Clássico -->
+                            <button onclick="setVisualTemplate('sabor-classic')" data-tpl-card="sabor-classic" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#faf7f5] text-[#181210]">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="w-6 h-6 rounded-full bg-[#dc2626] inline-block shadow"></span>
-                                    <span class="w-6 h-6 rounded-full bg-[#f59e0b] inline-block -ml-3 border-2 border-white"></span>
-                                    <span class="tpl-active-badge text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#dc2626] text-white">Ativo</span>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 rounded-full bg-[#d91c1c] inline-block shadow"></span>
+                                        <span class="w-6 h-6 rounded-full bg-[#facc15] inline-block -ml-2 border-2 border-white"></span>
+                                        <span class="w-6 h-6 rounded-full bg-[#181210] inline-block -ml-2 border-2 border-white"></span>
+                                    </div>
+                                    <span class="tpl-active-badge text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#d91c1c] text-white">Ativo</span>
                                 </div>
-                                <strong class="text-sm font-extrabold block">Clássico Fast-Food</strong>
-                                <span class="text-[11px] text-slate-600">Vermelho vibrante, âmbar e fundo claro limpo</span>
+                                <strong class="text-sm font-extrabold block">Sabor & Delícias Clássico</strong>
+                                <span class="text-[11px] text-stone-600">Vermelho vibrante, dourado e carvão</span>
                             </button>
 
                             <!-- Template 2: Smash & Gourmet Dark -->
-                            <button onclick="setVisualTemplate('gourmet-dark')" data-tpl-card="gourmet-dark" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#0f172a] text-[#f8fafc]">
+                            <button onclick="setVisualTemplate('gourmet-dark')" data-tpl-card="gourmet-dark" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#0f1115] text-[#f8fafc]">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="w-6 h-6 rounded-full bg-[#f59e0b] inline-block shadow"></span>
-                                    <span class="w-6 h-6 rounded-full bg-[#1e293b] inline-block -ml-3 border-2 border-[#334155]"></span>
-                                    <span class="tpl-active-badge hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#f59e0b] text-[#0f172a]">Ativo</span>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 rounded-full bg-[#f59e0b] inline-block shadow"></span>
+                                        <span class="w-6 h-6 rounded-full bg-[#181b22] inline-block -ml-2 border-2 border-[#2f3542]"></span>
+                                    </div>
+                                    <span class="tpl-active-badge hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#f59e0b] text-[#0f1115]">Ativo</span>
                                 </div>
                                 <strong class="text-sm font-extrabold block">Smash & Gourmet Dark</strong>
                                 <span class="text-[11px] text-slate-400">Modo escuro grafite com destaques dourados</span>
                             </button>
 
                             <!-- Template 3: Natural & Fresh -->
-                            <button onclick="setVisualTemplate('natural-fresh')" data-tpl-card="natural-fresh" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#f3f7f4] text-[#143326]">
+                            <button onclick="setVisualTemplate('natural-fresh')" data-tpl-card="natural-fresh" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#f3f8f5] text-[#122e22]">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="w-6 h-6 rounded-full bg-[#059669] inline-block shadow"></span>
-                                    <span class="w-6 h-6 rounded-full bg-[#10b981] inline-block -ml-3 border-2 border-white"></span>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 rounded-full bg-[#059669] inline-block shadow"></span>
+                                        <span class="w-6 h-6 rounded-full bg-[#10b981] inline-block -ml-2 border-2 border-white"></span>
+                                    </div>
                                     <span class="tpl-active-badge hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#059669] text-white">Ativo</span>
                                 </div>
                                 <strong class="text-sm font-extrabold block">Natural & Fresh</strong>
-                                <span class="text-[11px] text-emerald-800">Verde esmeralda, menta e fundo creme suave</span>
+                                <span class="text-[11px] text-emerald-800">Verde esmeralda, menta e fundo suave</span>
                             </button>
 
                             <!-- Template 4: Cantina Artesanal -->
                             <button onclick="setVisualTemplate('cantina-artesanal')" data-tpl-card="cantina-artesanal" class="tpl-card p-4 rounded-2xl border-2 text-left transition-all bg-[#fffbeb] text-[#451a03]">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="w-6 h-6 rounded-full bg-[#9a3412] inline-block shadow"></span>
-                                    <span class="w-6 h-6 rounded-full bg-[#d97706] inline-block -ml-3 border-2 border-white"></span>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 rounded-full bg-[#9a3412] inline-block shadow"></span>
+                                        <span class="w-6 h-6 rounded-full bg-[#d97706] inline-block -ml-2 border-2 border-white"></span>
+                                    </div>
                                     <span class="tpl-active-badge hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#9a3412] text-white">Ativo</span>
                                 </div>
                                 <strong class="text-sm font-extrabold block">Cantina Artesanal</strong>
-                                <span class="text-[11px] text-amber-900">Terracota, tons areia e visual rústico sofisticado</span>
+                                <span class="text-[11px] text-amber-900">Terracota, tons areia e visual rústico</span>
                             </button>
                         </div>
                     </div>
@@ -676,8 +691,8 @@
                             <div class="bg-subtle p-4 rounded-2xl border border-theme flex items-center gap-3.5">
                                 <div id="brand-logo-preview-box"></div>
                                 <div>
-                                    <strong id="brand-preview-name" class="text-sm font-extrabold text-main block">Lanchonete da Mãe</strong>
-                                    <span id="brand-preview-slogan" class="text-xs text-muted">Pré-visualização do cabeçalho</span>
+                                    <strong id="brand-preview-name" class="text-sm font-extrabold text-main block">Sabor e Delícias</strong>
+                                    <span id="brand-preview-slogan" class="text-xs text-muted">Comidas com sabor venezuelano</span>
                                 </div>
                             </div>
 
@@ -685,21 +700,21 @@
                             <div class="space-y-1.5">
                                 <span class="text-xs font-bold text-main block" data-i18n="preset_emblems">Emblemas Prontos (1 Clique):</span>
                                 <div class="grid grid-cols-4 gap-2">
+                                    <button type="button" onclick="selectPresetLogo('sabor-venezuela')" class="p-2.5 rounded-xl bg-subtle hover:border-brand border border-theme flex flex-col items-center gap-1 text-[10px] font-bold">
+                                        <span class="w-8 h-8 rounded-lg bg-[#d91c1c] text-amber-300 flex items-center justify-center font-extrabold">🇻🇪</span>
+                                        <span>Sabor VE</span>
+                                    </button>
                                     <button type="button" onclick="selectPresetLogo('burger-flame')" class="p-2.5 rounded-xl bg-subtle hover:border-brand border border-theme flex flex-col items-center gap-1 text-[10px] font-bold">
                                         <span class="w-8 h-8 rounded-lg bg-brand text-on-brand flex items-center justify-center"><i class="fa-solid fa-burger"></i></span>
                                         <span>Burger</span>
                                     </button>
                                     <button type="button" onclick="selectPresetLogo('crown-grill')" class="p-2.5 rounded-xl bg-subtle hover:border-brand border border-theme flex flex-col items-center gap-1 text-[10px] font-bold">
-                                        <span class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center"><i class="fa-solid fa-crown"></i></span>
-                                        <span>Grill</span>
-                                    </button>
-                                    <button type="button" onclick="selectPresetLogo('leaf-fresh')" class="p-2.5 rounded-xl bg-subtle hover:border-brand border border-theme flex flex-col items-center gap-1 text-[10px] font-bold">
-                                        <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center"><i class="fa-solid fa-leaf"></i></span>
-                                        <span>Fresh</span>
+                                        <span class="w-8 h-8 rounded-lg bg-amber-400 text-neutral-950 flex items-center justify-center"><i class="fa-solid fa-crown"></i></span>
+                                        <span>Delícias</span>
                                     </button>
                                     <button type="button" onclick="selectPresetLogo('chef-hat')" class="p-2.5 rounded-xl bg-subtle hover:border-brand border border-theme flex flex-col items-center gap-1 text-[10px] font-bold">
-                                        <span class="w-8 h-8 rounded-lg bg-orange-800 text-white flex items-center justify-center"><i class="fa-solid fa-fire-flame-curved"></i></span>
-                                        <span>Artesanal</span>
+                                        <span class="w-8 h-8 rounded-lg bg-neutral-900 text-amber-400 flex items-center justify-center"><i class="fa-solid fa-fire-flame-curved"></i></span>
+                                        <span>Chapa</span>
                                     </button>
                                 </div>
                             </div>
@@ -854,7 +869,7 @@
         <!-- MODAL 1: PERSONALIZAR ITEM -->
         <div id="modal-item-custom" class="modal-box hidden bg-surface border border-theme w-full max-w-md rounded-3xl overflow-hidden shadow-2xl">
             <div class="relative h-44 bg-subtle">
-                <img id="cust-item-img" src="" alt="" onerror="this.src='https://placehold.co/600x300/dc2626/ffffff?text=Burger'" class="w-full h-full object-cover">
+                <img id="cust-item-img" src="" alt="" onerror="this.src='https://placehold.co/600x300/d91c1c/facc15?text=Sabor+e+Delicias'" class="w-full h-full object-cover">
                 <button onclick="closeAllModals()" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/70 text-white flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -875,7 +890,7 @@
 
                 <div>
                     <label class="text-xs font-bold text-main block mb-1" data-i18n="kitchen_notes">Observações para a Cozinha</label>
-                    <input type="text" id="cust-item-notes" data-i18n-placeholder="notes_placeholder" placeholder="Ex: Sem cebola, ponto bem passado..."
+                    <input type="text" id="cust-item-notes" data-i18n-placeholder="notes_placeholder" placeholder="Ex: Sem cebola, molho à parte..."
                         class="w-full bg-subtle text-xs rounded-xl px-3 py-2.5 border border-theme">
                 </div>
             </div>
@@ -907,7 +922,7 @@
                 <div id="cli-checkout-items" class="space-y-2"></div>
 
                 <div class="flex gap-2">
-                    <input type="text" id="cli-coupon-input" placeholder="Cupom (BEMVINDO10)" class="flex-1 bg-subtle uppercase font-mono rounded-xl px-3 py-2 border border-theme">
+                    <input type="text" id="cli-coupon-input" placeholder="Cupom (SABOR10)" class="flex-1 bg-subtle uppercase font-mono rounded-xl px-3 py-2 border border-theme">
                     <button onclick="applyCustomerCoupon()" class="px-3.5 py-2 bg-subtle border border-theme rounded-xl font-bold text-main" data-i18n="apply">Aplicar</button>
                 </div>
 
@@ -927,7 +942,7 @@
                         <button onclick="setCustomerPayment('Dinheiro')" data-cpay="Dinheiro" class="cli-pay-btn py-2 rounded-xl font-semibold border border-theme bg-subtle text-muted" data-i18n="cash">Dinheiro</button>
                     </div>
                     <div id="cli-pix-box" class="bg-subtle p-3 rounded-xl border border-theme flex items-center justify-between">
-                        <span>PIX: <strong id="cli-pix-key-display" class="text-brand font-mono">12.345.678/0001-90</strong></span>
+                        <span>PIX: <strong id="cli-pix-key-display" class="text-brand font-mono">48996777139</strong></span>
                         <button onclick="copyPixToClipboard()" class="px-2.5 py-1 bg-surface border border-theme rounded-lg font-bold text-main" data-i18n="copy">Copiar</button>
                     </div>
                     <div id="cli-troco-box" class="hidden">
@@ -975,7 +990,7 @@
             </div>
             <div class="p-4 bg-subtle border-t border-theme grid grid-cols-3 gap-2">
                 <button onclick="sendTableItemsToKitchen()" class="bg-brand text-on-brand font-bold py-2.5 px-2 rounded-xl text-xs" data-i18n="send_kitchen">Cozinha</button>
-                <button onclick="requestTableBill()" class="bg-amber-500 text-white font-bold py-2.5 px-2 rounded-xl text-xs" data-i18n="request_bill">Pedir Conta</button>
+                <button onclick="requestTableBill()" class="bg-amber-500 text-neutral-950 font-extrabold py-2.5 px-2 rounded-xl text-xs" data-i18n="request_bill">Pedir Conta</button>
                 <button onclick="transferTableToPdv()" class="bg-emerald-600 text-white font-bold py-2.5 px-2 rounded-xl text-xs" data-i18n="close_at_pdv">Fechar PDV</button>
             </div>
         </div>
@@ -1061,15 +1076,15 @@
             <form onsubmit="saveNewAddon(event)" class="space-y-3">
                 <div>
                     <label class="text-muted font-bold block mb-1">Nome (Português 🇧🇷) *</label>
-                    <input type="text" id="new-addon-name-pt" required placeholder="Ex: Bacon Extra" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme">
+                    <input type="text" id="new-addon-name-pt" required placeholder="Ex: Catupiry Extra" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme">
                 </div>
                 <div>
                     <label class="text-muted font-bold block mb-1">Nombre (Español 🇪🇸) *</label>
-                    <input type="text" id="new-addon-name-es" required placeholder="Ej: Tocino Extra" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme">
+                    <input type="text" id="new-addon-name-es" required placeholder="Ej: Queso Crema Extra" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme">
                 </div>
                 <div>
                     <label class="text-muted font-bold block mb-1">Preço Extra (R$) *</label>
-                    <input type="number" step="0.01" id="new-addon-price" required placeholder="4.50" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme font-mono">
+                    <input type="number" step="0.01" id="new-addon-price" required placeholder="4.00" class="w-full bg-subtle rounded-xl px-3 py-2 border border-theme font-mono">
                 </div>
                 <button type="submit" class="w-full py-3 rounded-xl bg-brand text-on-brand font-extrabold">Salvar</button>
             </form>
@@ -1080,24 +1095,25 @@
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
 
     <!-- =========================================================
-         JAVASCRIPT: I18N, RBAC, TEMPLATES, LOGO & SINCRONIZAÇÃO
+         JAVASCRIPT: SABOR E DELÍCIAS (34 ITENS, I18N, RBAC & SYNC)
          ========================================================= -->
     <script>
-        const STORAGE_KEY = 'lanchonete_pro_v2';
-        const SESSION_ROLE_KEY = 'lanchonete_staff_role';
-        const CLIENT_ORDERS_KEY = 'lanchonete_client_order_ids';
-        const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('lanchonete_pro_v2_sync') : null;
+        const STORAGE_KEY = 'sabor_e_delicias_pro_v1';
+        const SESSION_ROLE_KEY = 'sabor_delicias_staff_role';
+        const CLIENT_ORDERS_KEY = 'sabor_delicias_client_order_ids';
+        const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('sabor_e_delicias_sync') : null;
 
         // =========================================================
         // 1. DICIONÁRIO BILÍNGUE COMPLETO (PORTUGUÊS & ESPANHOL)
         // =========================================================
         const I18N = {
             pt: {
+                venezuelan_tag: 'Sabor Venezuelano Autêntico',
                 my_orders: 'Meus Pedidos',
                 delivery_time_label: 'Tempo Estimado',
                 delivery_fee_label: 'Taxa de Entrega',
                 rating_label: 'Avaliação',
-                search_placeholder: 'Buscar lanche, combo ou bebida...',
+                search_placeholder: 'Buscar empanada, pastel, hambúrguer ou bebida...',
                 view_bag: 'Ver Sacola & Finalizar',
                 restricted_area: 'Área Restrita / Painel',
                 back_to_menu: 'Voltar ao Cardápio',
@@ -1171,7 +1187,7 @@
                 print_qr: 'Imprimir Plaquinhas',
                 addons_extras: 'Adicionais / Extras',
                 kitchen_notes: 'Observações para a Cozinha',
-                notes_placeholder: 'Ex: Sem cebola, ponto bem passado...',
+                notes_placeholder: 'Ex: Sem cebola, molho à parte...',
                 add_item: 'Adicionar',
                 checkout_title: 'Finalizar Pedido',
                 delivery_opt: '🛵 Entrega',
@@ -1199,11 +1215,12 @@
                 status_completed: 'Concluído'
             },
             es: {
+                venezuelan_tag: 'Auténtico Sabor Venezolano',
                 my_orders: 'Mis Pedidos',
                 delivery_time_label: 'Tiempo Estimado',
                 delivery_fee_label: 'Costo de Envío',
                 rating_label: 'Calificación',
-                search_placeholder: 'Buscar hamburguesa, combo o bebida...',
+                search_placeholder: 'Buscar empanada, pastel, hamburguesa o bebida...',
                 view_bag: 'Ver Bolsa y Finalizar',
                 restricted_area: 'Área Restringida / Panel',
                 back_to_menu: 'Volver al Menú',
@@ -1277,7 +1294,7 @@
                 print_qr: 'Imprimir Carteles QR',
                 addons_extras: 'Adicionales / Extras',
                 kitchen_notes: 'Notas para la Cocina',
-                notes_placeholder: 'Ej: Sin cebolla, carne bien cocida...',
+                notes_placeholder: 'Ej: Sin cebolla, salsa aparte...',
                 add_item: 'Agregar',
                 checkout_title: 'Finalizar Pedido',
                 delivery_opt: '🛵 Envío a Domicilio',
@@ -1341,105 +1358,518 @@
         };
 
         // =========================================================
-        // 3. ESTADO INICIAL COMPLETO (BILÍNGUE + LOGO + TEMPLATES)
+        // 3. ESTADO INICIAL COMPLETO — SABOR E DELÍCIAS (34 ITENS)
         // =========================================================
         function getInitialState() {
             const now = Date.now();
+            const imgEmpanada = 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80';
+            const imgPastel = 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80';
+            const imgBurger = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80';
+            const imgCombo = 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f6?auto=format&fit=crop&w=600&q=80';
+            const imgFries = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80';
+            const imgDrink = 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80';
+
+            const allAddonIds = ['add-catupiry', 'add-mussarela', 'add-bacon', 'add-ovo', 'add-carne', 'add-molho'];
+
             return {
                 lang: 'pt',
-                template: 'classic',
+                template: 'sabor-classic',
                 settings: {
-                    storeName: 'Lanchonete da Mãe',
-                    slogan_pt: 'O sabor caseiro que conquista na primeira mordida!',
-                    slogan_es: '¡El sabor casero que conquista en el primer bocado!',
-                    storePhone: '554891216149',
-                    storeAddress: 'Rua dos Sabores, 450 - Centro',
-                    pixKey: '12.345.678/0001-90',
+                    storeName: 'Sabor e Delícias',
+                    slogan_pt: 'Comidas com sabor venezuelano • Qualidade e muito mais sabor!',
+                    slogan_es: '¡Comidas con sabor venezolano • Calidad y mucho más sabor!',
+                    storePhone: '5548996777139',
+                    storeAddress: 'Av. Brasil, 381 - Bela Vista, São José - SC',
+                    pixKey: '48996777139',
                     deliveryFee: 6.00,
                     deliveryTime: '30 - 45 min',
                     isOpen: true,
                     paperWidth: '80mm',
                     showLogo: true,
-                    logoType: 'preset', // 'preset' | 'url' | 'upload'
-                    logoPreset: 'burger-flame',
+                    logoType: 'preset',
+                    logoPreset: 'sabor-venezuela',
                     logoUrl: ''
                 },
                 categories: [
-                    { id: 'combos', name_pt: 'Combos Especiais', name_es: 'Combos Especiales', icon: 'fa-burger' },
-                    { id: 'burgers', name_pt: 'Artesanais & Smash', name_es: 'Artesanales y Smash', icon: 'fa-drumstick-bite' },
-                    { id: 'porcoes', name_pt: 'Porções', name_es: 'Porciones', icon: 'fa-utensils' },
-                    { id: 'bebidas', name_pt: 'Bebidas', name_es: 'Bebidas', icon: 'fa-glass-water' }
+                    { id: 'empanadas', emoji: '🥟', name_pt: 'Empanadas (Sabor Venezuelano)', name_es: 'Empanadas (Sabor Venezolano)', icon: 'fa-sun' },
+                    { id: 'pasteis', emoji: '🥟', name_pt: 'Pastel Frito', name_es: 'Pastel Frito', icon: 'fa-fire-flame-curved' },
+                    { id: 'hamburgueres', emoji: '🍔', name_pt: 'Hambúrgueres', name_es: 'Hamburguesas', icon: 'fa-burger' },
+                    { id: 'combos', emoji: '🎁', name_pt: 'Combos', name_es: 'Combos', icon: 'fa-box-open' },
+                    { id: 'porcoes', emoji: '🍟', name_pt: 'Porções de Batata Frita', name_es: 'Porciones de Papas Fritas', icon: 'fa-utensils' },
+                    { id: 'bebidas', emoji: '🥤', name_pt: 'Bebidas', name_es: 'Bebidas', icon: 'fa-glass-water' }
                 ],
                 addons: [
-                    { id: 'add-bacon', name_pt: 'Bacon Crocante Extra', name_es: 'Tocino Crocante Extra', price: 4.50, active: true },
-                    { id: 'add-cheddar', name_pt: 'Cheddar Cremoso', name_es: 'Queso Cheddar Cremoso', price: 4.00, active: true },
-                    { id: 'add-burger', name_pt: 'Hambúrguer 160g Extra', name_es: 'Hamburguesa 160g Extra', price: 7.50, active: true },
-                    { id: 'add-maio', name_pt: 'Maionese Verde da Casa', name_es: 'Mayonesa Verde de la Casa', price: 2.50, active: true }
+                    { id: 'add-catupiry', name_pt: 'Catupiry Extra', name_es: 'Queso Crema Catupiry Extra', price: 4.00, active: true },
+                    { id: 'add-mussarela', name_pt: 'Queijo Mussarela Extra', name_es: 'Queso Mozzarella Extra', price: 3.50, active: true },
+                    { id: 'add-bacon', name_pt: 'Bacon Crocante', name_es: 'Tocino Crocante', price: 4.50, active: true },
+                    { id: 'add-ovo', name_pt: 'Ovo Frito', name_es: 'Huevo Frito', price: 2.50, active: true },
+                    { id: 'add-carne', name_pt: 'Carne Desfiada Extra', name_es: 'Carne Mechada Extra', price: 5.00, active: true },
+                    { id: 'add-molho', name_pt: 'Molho de Alho Venezolano / Molho da Casa', name_es: 'Salsa de Ajo Venezolana / Salsa de la Casa', price: 2.00, active: true }
                 ],
                 products: [
+                    // ==========================================
+                    // CATEGORIA 1: EMPANADAS (10 ITENS)
+                    // ==========================================
                     {
-                        id: 'p-xbacon',
-                        category: 'burgers',
-                        name_pt: 'X-Bacon Artesanal',
-                        name_es: 'Hamburguesa X-Tocino Artesanal',
-                        desc_pt: 'Pão brioche selado na manteiga, burger 160g, queijo prato, bacon crocante, alface, tomate e maionese verde.',
-                        desc_es: 'Pan brioche sellado en mantequilla, carne 160g, queso, tocino crocante, lechuga, tomate y mayonesa verde.',
-                        price: 32.90,
-                        cost: 12.50,
+                        id: 'emp-carne-desfiada',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Carne Desfiada',
+                        name_es: 'Empanada de Carne Mechada',
+                        desc_pt: 'Empanada artesanal venezuelana recheada com carne desfiada suculenta.',
+                        desc_es: 'Empanada artesanal venezolana rellena con jugosa carne mechada.',
+                        price: 15.00,
+                        cost: 5.50,
                         active: true,
-                        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
-                        addonIds: ['add-bacon', 'add-cheddar', 'add-burger', 'add-maio']
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
                     },
                     {
-                        id: 'p-smash',
-                        category: 'burgers',
-                        name_pt: 'Smash Duplo Cheddar',
-                        name_es: 'Doble Smash Cheddar',
-                        desc_pt: 'Dois discos smash 90g prensados na chapa, duplo cheddar cremoso e cebola caramelizada no pão australiano.',
-                        desc_es: 'Dos carnes smash 90g prensadas a la plancha, doble cheddar cremoso y cebolla caramelizada en pan australiano.',
-                        price: 29.90,
-                        cost: 11.00,
+                        id: 'emp-carne-moida',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Carne Moída',
+                        name_es: 'Empanada de Carne Molida',
+                        desc_pt: 'Massa dourada e crocante com carne moída temperada na hora.',
+                        desc_es: 'Masa dorada y crocante con carne molida sazonada al momento.',
+                        price: 13.00,
+                        cost: 4.80,
                         active: true,
-                        image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80',
-                        addonIds: ['add-bacon', 'add-cheddar', 'add-maio']
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
                     },
                     {
-                        id: 'p-combo-familia',
-                        category: 'combos',
-                        name_pt: 'Combo Família Completo',
-                        name_es: 'Combo Familiar Completo',
-                        desc_pt: '4x Burgers Artesanais + 1x Batata Rústica Grande com Cheddar e Bacon + 1x Refrigerante 2L.',
-                        desc_es: '4x Hamburguesas Artesanales + 1x Papas Rústicas Grandes con Cheddar y Tocino + 1x Refresco 2L.',
-                        price: 119.90,
-                        cost: 48.00,
+                        id: 'emp-frango',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Frango',
+                        name_es: 'Empanada de Pollo',
+                        desc_pt: 'Recheio generoso de frango desfiado bem temperado.',
+                        desc_es: 'Generoso relleno de pollo desmenuzado bien sazonado.',
+                        price: 13.00,
+                        cost: 4.60,
                         active: true,
-                        image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f6?auto=format&fit=crop&w=600&q=80',
-                        addonIds: ['add-maio']
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
                     },
                     {
-                        id: 'p-batata',
-                        category: 'porcoes',
-                        name_pt: 'Batata Rústica Cheddar & Bacon',
-                        name_es: 'Papas Rústicas con Cheddar y Tocino',
-                        desc_pt: 'Porção 500g de batatas rústicas temperadas cobertas com cheddar cremoso e bacon crocante.',
-                        desc_es: 'Porción de 500g de papas rústicas condimentadas cubiertas con cheddar cremoso y tocino crocante.',
-                        price: 28.90,
+                        id: 'emp-queijo',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Queijo',
+                        name_es: 'Empanada de Queso',
+                        desc_pt: 'Queijo branco derretido no ponto certo.',
+                        desc_es: 'Queso blanco derretido en su punto exacto.',
+                        price: 13.00,
+                        cost: 4.50,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-presunto-queijo',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Presunto e Queijo',
+                        name_es: 'Empanada de Jamón y Queso',
+                        desc_pt: 'Clássica combinação de presunto fatiado e queijo derretido.',
+                        desc_es: 'Clásica combinación de jamón rebanado y queso derretido.',
+                        price: 15.00,
+                        cost: 5.20,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-salsicha-queijo',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Salsicha e Queijo',
+                        name_es: 'Empanada de Salchicha y Queso',
+                        desc_pt: 'Salsicha selecionada com muito queijo derretido.',
+                        desc_es: 'Salchicha seleccionada con mucho queso derretido.',
+                        price: 15.00,
+                        cost: 5.00,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-calabresa-queijo',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Calabresa com Queijo',
+                        name_es: 'Empanada de Calabresa con Queso',
+                        desc_pt: 'Calabresa fatiada e dourada com queijo derretido.',
+                        desc_es: 'Calabresa rebanada y dorada con queso derretido.',
+                        price: 15.00,
+                        cost: 5.40,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-carne-desfiada-queijo-presunto',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Carne Desfiada com Queijo e Presunto',
+                        name_es: 'Empanada de Carne Mechada con Queso y Jamón',
+                        desc_pt: 'Recheio especial de carne desfiada, queijo derretido e presunto.',
+                        desc_es: 'Relleno especial de carne mechada, queso derretido y jamón.',
+                        price: 20.00,
+                        cost: 7.40,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-frango-queijo-presunto',
+                        category: 'empanadas',
+                        name_pt: 'Empanada de Frango com Queijo e Presunto',
+                        name_es: 'Empanada de Pollo con Queso y Jamón',
+                        desc_pt: 'Frango desfiado cremoso combinado com queijo e presunto.',
+                        desc_es: 'Pollo desmenuzado cremoso combinado con queso y jamón.',
+                        price: 18.00,
+                        cost: 6.50,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'emp-pabellon',
+                        category: 'empanadas',
+                        name_pt: 'Empanada Pabellón (Carne Desfiada, Feijão Preto, Queijo Branco e Banana Frita)',
+                        name_es: 'Empanada Pabellón (Carne Mechada, Caraotas Negras, Queso Blanco y Tajadas)',
+                        desc_pt: 'O clássico sabor venezuelano: carne desfiada, feijão preto, queijo branco e banana-da-terra frita.',
+                        desc_es: 'El clásico sabor venezolano: carne mechada, caraotas negras, queso blanco y plátano maduro frito.',
+                        price: 20.00,
+                        cost: 7.60,
+                        active: true,
+                        image: imgEmpanada,
+                        addonIds: allAddonIds
+                    },
+
+                    // ==========================================
+                    // CATEGORIA 2: PASTEL FRITO (10 ITENS)
+                    // ==========================================
+                    {
+                        id: 'pas-carne-moida',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Carne Moída',
+                        name_es: 'Pastel Frito de Carne Molida',
+                        desc_pt: 'Massa crocante e recheio de carne moída bem temperada.',
+                        desc_es: 'Masa crocante y relleno de carne molida bien sazonada.',
+                        price: 15.00,
+                        cost: 5.20,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-frango',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Frango',
+                        name_es: 'Pastel Frito de Pollo',
+                        desc_pt: 'Frango desfiado com temperos especiais.',
+                        desc_es: 'Pollo desmenuzado con condimentos especiales.',
+                        price: 15.00,
+                        cost: 5.00,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-queijo',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Queijo',
+                        name_es: 'Pastel Frito de Queso',
+                        desc_pt: 'Queijo derretido que é uma tentação.',
+                        desc_es: 'Queso derretido que es una tentación.',
+                        price: 15.00,
+                        cost: 4.90,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-presunto-queijo',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Presunto e Queijo',
+                        name_es: 'Pastel Frito de Jamón y Queso',
+                        desc_pt: 'A combinação perfeita de sabor.',
+                        desc_es: 'La combinación perfecta de sabor.',
+                        price: 18.00,
+                        cost: 6.10,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-calabresa',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Calabresa',
+                        name_es: 'Pastel Frito de Calabresa',
+                        desc_pt: 'Calabresa bem temperada com queijo.',
+                        desc_es: 'Calabresa bien sazonada con queso.',
+                        price: 18.00,
+                        cost: 6.20,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-pizza',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Pizza',
+                        name_es: 'Pastel Frito sabor Pizza',
+                        desc_pt: 'Molho, queijo, presunto e orégano.',
+                        desc_es: 'Salsa de tomate, queso, jamón y orégano.',
+                        price: 18.00,
+                        cost: 6.00,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-carne-desfiada',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Carne Desfiada',
+                        name_es: 'Pastel Frito de Carne Mechada',
+                        desc_pt: 'Carne desfiada bem temperada com muito sabor.',
+                        desc_es: 'Carne mechada bien sazonada con mucho sabor.',
+                        price: 20.00,
+                        cost: 7.00,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-carne-desfiada-catupiry',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Carne Desfiada com Queijo e Catupiry',
+                        name_es: 'Pastel Frito de Carne Mechada con Queso y Catupiry',
+                        desc_pt: 'O melhor da carne desfiada com muito queijo e catupiry.',
+                        desc_es: 'Lo mejor de la carne mechada con mucho queso y catupiry.',
+                        price: 22.00,
+                        cost: 8.10,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-frango-catupiry',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Frango com Queijo e Catupiry',
+                        name_es: 'Pastel Frito de Pollo con Queso y Catupiry',
+                        desc_pt: 'Frango desfiado com queijo e catupiry, irresistível!',
+                        desc_es: 'Pollo desmenuzado con queso y catupiry, ¡irresistible!',
+                        price: 22.00,
+                        cost: 7.80,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'pas-carne-moida-catupiry',
+                        category: 'pasteis',
+                        name_pt: 'Pastel de Carne Moída com Queijo e Catupiry',
+                        name_es: 'Pastel Frito de Carne Molida con Queso y Catupiry',
+                        desc_pt: 'Sabor e cremosidade em cada mordida!',
+                        desc_es: '¡Sabor y cremosidad en cada bocado!',
+                        price: 22.00,
+                        cost: 7.70,
+                        active: true,
+                        image: imgPastel,
+                        addonIds: allAddonIds
+                    },
+
+                    // ==========================================
+                    // CATEGORIA 3: HAMBÚRGUERES (3 ITENS)
+                    // ==========================================
+                    {
+                        id: 'bur-tradicional',
+                        category: 'hamburgueres',
+                        name_pt: 'Hambúrguer Tradicional',
+                        name_es: 'Hamburguesa Tradicional',
+                        desc_pt: 'Pão, carne, queijo, tomate, alface e molho da casa.',
+                        desc_es: 'Pan, carne, queso, tomate, lechuga y salsa de la casa.',
+                        price: 10.00,
+                        cost: 4.20,
+                        active: true,
+                        image: imgBurger,
+                        addonIds: allAddonIds
+                    },
+                    {
+                        id: 'bur-delicias',
+                        category: 'hamburgueres',
+                        name_pt: 'Hambúrguer Delícias',
+                        name_es: 'Hamburguesa Delícias',
+                        desc_pt: 'Pão, carne, queijo, ovo, tomate, alface e molho da casa.',
+                        desc_es: 'Pan, carne, queso, huevo, tomate, lechuga y salsa de la casa.',
+                        price: 25.00,
                         cost: 9.50,
                         active: true,
-                        image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',
-                        addonIds: ['add-bacon', 'add-maio']
+                        image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80',
+                        addonIds: allAddonIds
                     },
                     {
-                        id: 'p-coca',
+                        id: 'bur-mixto',
+                        category: 'hamburgueres',
+                        name_pt: 'Hambúrguer Mixto',
+                        name_es: 'Hamburguesa Mixta',
+                        desc_pt: 'Pão, carne, frango, queijo, ovo, tomate, alface e molho da casa.',
+                        desc_es: 'Pan, carne, pollo, queso, huevo, tomate, lechuga y salsa de la casa.',
+                        price: 35.00,
+                        cost: 13.50,
+                        active: true,
+                        image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80',
+                        addonIds: allAddonIds
+                    },
+
+                    // ==========================================
+                    // CATEGORIA 4: COMBOS (1 ITEM)
+                    // ==========================================
+                    {
+                        id: 'cmb-tradicional',
+                        category: 'combos',
+                        name_pt: 'Combo Tradicional',
+                        name_es: 'Combo Tradicional',
+                        desc_pt: 'Hambúrguer Tradicional + Batata Frita + Refrigerante 350 ml.',
+                        desc_es: 'Hamburguesa Tradicional + Papas Fritas + Refresco 350 ml.',
+                        price: 20.00,
+                        cost: 8.50,
+                        active: true,
+                        image: imgCombo,
+                        addonIds: allAddonIds
+                    },
+
+                    // ==========================================
+                    // CATEGORIA 5: PORÇÕES DE BATATA FRITA (3 ITENS)
+                    // ==========================================
+                    {
+                        id: 'bat-pequena',
+                        category: 'porcoes',
+                        name_pt: 'Batata Frita - Pequena',
+                        name_es: 'Papas Fritas - Pequeña',
+                        desc_pt: 'Porção individual crocante e sequinha.',
+                        desc_es: 'Porción individual crocante y dorada.',
+                        price: 13.00,
+                        cost: 4.10,
+                        active: true,
+                        image: imgFries,
+                        addonIds: ['add-catupiry', 'add-mussarela', 'add-bacon', 'add-molho']
+                    },
+                    {
+                        id: 'bat-media',
+                        category: 'porcoes',
+                        name_pt: 'Batata Frita - Média',
+                        name_es: 'Papas Fritas - Mediana',
+                        desc_pt: 'Porção média ideal para dividir.',
+                        desc_es: 'Porción mediana ideal para compartir.',
+                        price: 20.00,
+                        cost: 6.40,
+                        active: true,
+                        image: imgFries,
+                        addonIds: ['add-catupiry', 'add-mussarela', 'add-bacon', 'add-molho']
+                    },
+                    {
+                        id: 'bat-grande',
+                        category: 'porcoes',
+                        name_pt: 'Batata Frita - Grande',
+                        name_es: 'Papas Fritas - Grande',
+                        desc_pt: 'Porção família bem servida de batata frita crocante.',
+                        desc_es: 'Porción familiar abundante de papas fritas crocantes.',
+                        price: 25.00,
+                        cost: 8.20,
+                        active: true,
+                        image: imgFries,
+                        addonIds: ['add-catupiry', 'add-mussarela', 'add-bacon', 'add-molho']
+                    },
+
+                    // ==========================================
+                    // CATEGORIA 6: BEBIDAS (7 ITENS)
+                    // ==========================================
+                    {
+                        id: 'beb-coca-350',
                         category: 'bebidas',
                         name_pt: 'Coca-Cola Lata 350ml',
                         name_es: 'Coca-Cola Lata 350ml',
-                        desc_pt: 'Lata 350ml estupidamente gelada.',
-                        desc_es: 'Lata de 350ml bien fría.',
-                        price: 6.50,
-                        cost: 2.90,
+                        desc_pt: 'Refrigerante Coca-Cola Original 350ml bem gelada.',
+                        desc_es: 'Refresco Coca-Cola Original 350ml bien fría.',
+                        price: 6.00,
+                        cost: 2.80,
                         active: true,
-                        image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
+                        image: imgDrink,
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-coca-zero-350',
+                        category: 'bebidas',
+                        name_pt: 'Coca-Cola Zero Lata 350ml',
+                        name_es: 'Coca-Cola Zero Lata 350ml',
+                        desc_pt: 'Refrigerante Coca-Cola Sem Açúcar 350ml gelada.',
+                        desc_es: 'Refresco Coca-Cola Sin Azúcar 350ml bien fría.',
+                        price: 6.00,
+                        cost: 2.80,
+                        active: true,
+                        image: imgDrink,
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-guarana-350',
+                        category: 'bebidas',
+                        name_pt: 'Guaraná Antarctica Lata 350ml',
+                        name_es: 'Guaraná Antarctica Lata 350ml',
+                        desc_pt: 'Refrigerante Guaraná Antarctica 350ml gelado.',
+                        desc_es: 'Refresco Guaraná Antarctica 350ml bien frío.',
+                        price: 6.00,
+                        cost: 2.60,
+                        active: true,
+                        image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=600&q=80',
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-fanta-350',
+                        category: 'bebidas',
+                        name_pt: 'Fanta Laranja Lata 350ml',
+                        name_es: 'Fanta Naranja Lata 350ml',
+                        desc_pt: 'Refrigerante Fanta Laranja 350ml gelada.',
+                        desc_es: 'Refresco Fanta Naranja 350ml bien fría.',
+                        price: 6.00,
+                        cost: 2.60,
+                        active: true,
+                        image: 'https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&w=600&q=80',
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-sprite-350',
+                        category: 'bebidas',
+                        name_pt: 'Sprite Lata 350ml',
+                        name_es: 'Sprite Lata 350ml',
+                        desc_pt: 'Refrigerante Sprite Limão 350ml gelado.',
+                        desc_es: 'Refresco Sprite Limón 350ml bien frío.',
+                        price: 6.00,
+                        cost: 2.60,
+                        active: true,
+                        image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=600&q=80',
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-refri-1l',
+                        category: 'bebidas',
+                        name_pt: 'Refrigerante 1 Litro (Coca-Cola / Fanta)',
+                        name_es: 'Refresco 1 Litro (Coca-Cola / Fanta)',
+                        desc_pt: 'Garrafa 1 Litro gelada (informe Coca-Cola ou Fanta nas observações).',
+                        desc_es: 'Botella 1 Litro fría (indique Coca-Cola o Fanta en las observaciones).',
+                        price: 10.00,
+                        cost: 4.90,
+                        active: true,
+                        image: imgDrink,
+                        addonIds: []
+                    },
+                    {
+                        id: 'beb-refri-2l',
+                        category: 'bebidas',
+                        name_pt: 'Refrigerante 2 Litros (Coca-Cola / Fanta)',
+                        name_es: 'Refresco 2 Litros (Coca-Cola / Fanta)',
+                        desc_pt: 'Garrafa família 2 Litros gelada (informe Coca-Cola ou Fanta nas observações).',
+                        desc_es: 'Botella familiar 2 Litros fría (indique Coca-Cola o Fanta en las observaciones).',
+                        price: 14.00,
+                        cost: 6.90,
+                        active: true,
+                        image: imgDrink,
                         addonIds: []
                     }
                 ],
@@ -1450,10 +1880,11 @@
                             id: 2,
                             number: '02',
                             status: 'occupied',
-                            openedAt: now - 18 * 60000,
-                            customerName: 'Carlos & Ana',
+                            openedAt: now - 16 * 60000,
+                            customerName: 'Família Rodríguez',
                             items: [
-                                { uid: 'ti-1', productId: 'p-xbacon', name_pt: 'X-Bacon Artesanal', name_es: 'Hamburguesa X-Tocino Artesanal', qty: 2, unitPrice: 32.90, cost: 12.50, addons: [], notes: '', sentToKitchen: true }
+                                { uid: 'ti-1', productId: 'emp-pabellon', name_pt: 'Empanada Pabellón (Carne Desfiada, Feijão Preto, Queijo Branco e Banana Frita)', name_es: 'Empanada Pabellón (Carne Mechada, Caraotas Negras, Queso Blanco y Tajadas)', qty: 2, unitPrice: 20.00, cost: 7.60, addons: [], notes: '', sentToKitchen: true },
+                                { uid: 'ti-2', productId: 'beb-coca-350', name_pt: 'Coca-Cola Lata 350ml', name_es: 'Coca-Cola Lata 350ml', qty: 2, unitPrice: 6.00, cost: 2.80, addons: [], notes: '', sentToKitchen: true }
                             ]
                         };
                     }
@@ -1466,21 +1897,22 @@
                         source: 'DELIVERY',
                         tableNumber: null,
                         deliveryType: 'delivery',
-                        customerName: 'Fernanda Oliveira',
-                        customerPhone: '48999887766',
-                        address: 'Rua das Acácias, 180',
+                        customerName: 'Mariana Costa',
+                        customerPhone: '48999112233',
+                        address: 'Rua das Flores, 210 - Bela Vista, São José',
                         items: [
-                            { name_pt: 'X-Bacon Artesanal', name_es: 'Hamburguesa X-Tocino Artesanal', qty: 2, unitPrice: 37.40, cost: 12.50, addons: ['Bacon Crocante Extra'], notes: 'Ao ponto' }
+                            { name_pt: 'Empanada Pabellón (Carne Desfiada, Feijão Preto, Queijo Branco e Banana Frita)', name_es: 'Empanada Pabellón (Carne Mechada, Caraotas Negras, Queso Blanco y Tajadas)', qty: 2, unitPrice: 22.00, cost: 7.60, addons: ['Molho de Alho Venezolano / Molho da Casa'], notes: 'Molho extra por favor' },
+                            { name_pt: 'Pastel de Carne Desfiada com Queijo e Catupiry', name_es: 'Pastel Frito de Carne Mechada con Queso y Catupiry', qty: 1, unitPrice: 22.00, cost: 8.10, addons: [], notes: '' }
                         ],
-                        subtotal: 74.80,
+                        subtotal: 66.00,
                         discount: 0,
                         couponCode: '',
                         deliveryFee: 6.00,
-                        total: 80.80,
+                        total: 72.00,
                         paymentMethod: 'PIX',
                         changeFor: '',
                         status: 'new',
-                        createdAt: now - 3 * 60000
+                        createdAt: now - 4 * 60000
                     }
                 ],
                 orderCounter: 1002,
@@ -1490,7 +1922,8 @@
                     movements: [{ id: 'm1', type: 'abertura', amount: 150.00, reason: 'Troco inicial', createdAt: now - 3 * 3600000 }]
                 },
                 coupons: [
-                    { id: 'c1', code: 'BEMVINDO10', type: 'percent', value: 10, minOrder: 20, active: true }
+                    { id: 'c1', code: 'SABOR10', type: 'percent', value: 10, minOrder: 20, active: true },
+                    { id: 'c2', code: 'BEMVINDO10', type: 'percent', value: 10, minOrder: 20, active: true }
                 ]
             };
         }
@@ -1545,7 +1978,7 @@
         // =========================================================
         // 4. ROTEAMENTO (#cliente vs #painel) & SESSÃO RBAC
         // =========================================================
-        let currentRoute = 'cliente'; // 'cliente' | 'painel'
+        let currentRoute = 'cliente';
         let activeAdminTab = 'pdv';
 
         function getStaffRole() {
@@ -1569,7 +2002,7 @@
             const pin = document.getElementById('login-pin-input').value.trim();
             const matchedEntry = Object.entries(RBAC_ROLES).find(([_, cfg]) => cfg.pin === pin);
             if (!matchedEntry) {
-                showToast(state.lang === 'es' ? 'PIN inválido!' : 'PIN inválido!', 'error');
+                showToast(state.lang === 'es' ? '¡PIN inválido!' : 'PIN inválido!', 'error');
                 return;
             }
             const [roleKey, cfg] = matchedEntry;
@@ -1595,7 +2028,7 @@
         }
 
         // =========================================================
-        // 5. IDIOMA (PT / ES), TEMPLATES VISUAIS & RENDERIZAÇÃO DE LOGO
+        // 5. IDIOMA (PT / ES), TEMPLATES VISUAIS & LOGO SVG SABOR E DELÍCIAS
         // =========================================================
         function t(key) {
             const lang = state.lang || 'pt';
@@ -1618,11 +2051,9 @@
         }
 
         function applyThemeAndLanguage() {
-            // Aplica Template Visual no <html>
-            document.documentElement.dataset.template = state.template || 'classic';
+            document.documentElement.dataset.template = state.template || 'sabor-classic';
             document.documentElement.lang = state.lang === 'es' ? 'es' : 'pt-BR';
 
-            // Atualiza botões de idioma ativos
             document.querySelectorAll('[data-lang-btn]').forEach(btn => {
                 if (btn.dataset.langBtn === state.lang) {
                     btn.className = 'px-2 py-1 rounded-lg bg-brand text-on-brand font-extrabold shadow-sm';
@@ -1631,7 +2062,6 @@
                 }
             });
 
-            // Traduz todos os elementos com data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
                 if (key) el.innerText = t(key);
@@ -1641,7 +2071,6 @@
                 if (key) el.placeholder = t(key);
             });
 
-            // Atualiza cards de seleção de template
             document.querySelectorAll('[data-tpl-card]').forEach(card => {
                 const isSelected = card.dataset.tplCard === state.template;
                 const badge = card.querySelector('.tpl-active-badge');
@@ -1657,20 +2086,44 @@
 
         function renderBrandLogoHtml(size = 'md') {
             if (!state.settings.showLogo) return '';
-            const dim = size === 'lg' ? 'w-16 h-16 text-2xl' : size === 'sm' ? 'w-9 h-9 text-sm' : 'w-11 h-11 text-lg';
+            const dim = size === 'lg' ? 'w-16 h-16' : size === 'sm' ? 'w-9 h-9' : 'w-12 h-12';
 
             if ((state.settings.logoType === 'upload' || state.settings.logoType === 'url') && state.settings.logoUrl) {
                 return `<img src="${state.settings.logoUrl}" alt="Logo" onerror="this.style.display='none'" class="${dim} rounded-2xl object-cover border border-theme shadow-sm bg-white">`;
             }
 
+            if (state.settings.logoPreset === 'sabor-venezuela' || !state.settings.logoPreset) {
+                // Emblema SVG exclusivo Sabor e Delícias (Chapéu de Chef + Cores Venezuelanas)
+                return `
+                    <div class="${dim} rounded-2xl bg-[#181210] border-2 border-amber-400 flex items-center justify-center shadow-md overflow-hidden p-1">
+                        <svg viewBox="0 0 64 64" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Chapéu de Chef -->
+                            <path d="M20 24 C15 24 13 18 18 15 C19 10 26 8 32 10 C38 8 45 10 46 15 C51 18 49 24 44 24 Z" fill="#ffffff"/>
+                            <rect x="21" y="23" width="22" height="4" rx="1.5" fill="#e5e7eb"/>
+                            <!-- Iniciais SD em Dourado -->
+                            <text x="32" y="42" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="900" font-size="16" fill="#facc15">S&amp;D</text>
+                            <!-- Faixa Tricolor Venezuelana -->
+                            <path d="M10 48 Q32 45 54 48 L54 51 Q32 48 10 51 Z" fill="#facc15"/>
+                            <path d="M10 51 Q32 48 54 51 L54 54 Q32 51 10 54 Z" fill="#1d4ed8"/>
+                            <path d="M10 54 Q32 51 54 54 L54 57 Q32 54 10 57 Z" fill="#dc2626"/>
+                            <circle cx="24" cy="51.5" r="0.8" fill="#fff"/>
+                            <circle cx="28" cy="51" r="0.8" fill="#fff"/>
+                            <circle cx="32" cy="50.8" r="0.8" fill="#fff"/>
+                            <circle cx="36" cy="51" r="0.8" fill="#fff"/>
+                            <circle cx="40" cy="51.5" r="0.8" fill="#fff"/>
+                        </svg>
+                    </div>
+                `;
+            }
+
             const presets = {
                 'burger-flame': { bg: 'bg-brand text-on-brand', icon: 'fa-burger' },
-                'crown-grill': { bg: 'bg-amber-500 text-slate-950', icon: 'fa-crown' },
-                'leaf-fresh': { bg: 'bg-emerald-600 text-white', icon: 'fa-leaf' },
-                'chef-hat': { bg: 'bg-orange-800 text-white', icon: 'fa-fire-flame-curved' }
+                'crown-grill': { bg: 'bg-amber-400 text-neutral-950', icon: 'fa-crown' },
+                'chef-hat': { bg: 'bg-neutral-900 text-amber-400', icon: 'fa-fire-flame-curved' }
             };
             const p = presets[state.settings.logoPreset] || presets['burger-flame'];
-            return `<div class="${dim} rounded-2xl ${p.bg} flex items-center justify-center shadow-md"><i class="fa-solid ${p.icon}"></i></div>`;
+            const iconSize = size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-sm' : 'text-lg';
+            return `<div class="${dim} ${iconSize} rounded-2xl ${p.bg} flex items-center justify-center shadow-md"><i class="fa-solid ${p.icon}"></i></div>`;
         }
 
         function toggleShowLogo() {
@@ -1695,7 +2148,6 @@
             showToast('URL da logo aplicada!');
         }
 
-        // Upload de arquivo local redimensionado em canvas (leve para localStorage)
         function handleLogoFileUpload(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
@@ -1723,7 +2175,7 @@
 
         function saveBrandSettings(e) {
             e.preventDefault();
-            state.settings.storeName = document.getElementById('cfg-store-name').value.trim() || 'Lanchonete Pro';
+            state.settings.storeName = document.getElementById('cfg-store-name').value.trim() || 'Sabor e Delícias';
             state.settings.slogan_pt = document.getElementById('cfg-slogan-pt').value.trim();
             state.settings.slogan_es = document.getElementById('cfg-slogan-es').value.trim();
             state.settings.storePhone = document.getElementById('cfg-store-phone').value.trim();
@@ -1780,7 +2232,6 @@
 
             document.getElementById('adm-cash-indicator').innerText = `${t('cash')}: ${formatBRL(calculateCashBalance())}`;
 
-            // Renderiza APENAS as abas permitidas ao perfil (RBAC)
             const tabMeta = {
                 pdv: { icon: 'fa-cash-register', labelKey: 'tab_pdv' },
                 comanda: { icon: 'fa-mobile-screen-button', labelKey: 'tab_comanda' },
@@ -1810,7 +2261,6 @@
             const activePanel = document.getElementById(`adm-tab-${activeAdminTab}`);
             if (activePanel) activePanel.classList.remove('hidden');
 
-            // Atualiza dados do painel ativo
             if (activeAdminTab === 'pdv') { renderPdvCatalog(); renderPdvCart(); }
             if (activeAdminTab === 'comanda') { renderTablesGrid(); }
             if (activeAdminTab === 'cozinha') { renderKdsBoard(roleCfg.canSeePricesInKds); }
@@ -1845,16 +2295,15 @@
             document.getElementById('cli-store-address').innerHTML = `<i class="fa-solid fa-location-dot text-amber-400"></i> ${state.settings.storeAddress}`;
             document.getElementById('cli-delivery-time').innerText = state.settings.deliveryTime;
             document.getElementById('cli-delivery-fee').innerText = formatBRL(state.settings.deliveryFee);
-            document.getElementById('cli-footer-copy').innerText = `© 2026 ${state.settings.storeName}`;
+            document.getElementById('cli-footer-copy').innerText = `© 2026 ${state.settings.storeName} • ${state.settings.storeAddress}`;
             document.getElementById('cli-pix-key-display').innerText = state.settings.pixKey;
 
             const badge = document.getElementById('cli-open-badge');
             badge.innerText = state.settings.isOpen ? `● ${t('store_open')}` : `● ${t('store_closed')}`;
             badge.className = state.settings.isOpen
-                ? 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600'
-                : 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-500/15 text-red-600';
+                ? 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 flex-shrink-0'
+                : 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-500/15 text-red-600 flex-shrink-0';
 
-            // Verifica pedidos desta sessão do cliente
             const myIds = getClientSessionOrderIds();
             const myBtn = document.getElementById('cli-my-orders-btn');
             if (myIds.length > 0) {
@@ -1869,9 +2318,9 @@
 
         function renderCustomerMenu() {
             const catBar = document.getElementById('cli-categories-bar');
-            let catHtml = `<button onclick="setCliCategory('ALL')" class="px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap border ${cliCategory === 'ALL' ? 'bg-brand text-on-brand border-brand' : 'bg-surface text-muted border-theme'}">${t('all_categories')}</button>`;
+            let catHtml = `<button onclick="setCliCategory('ALL')" class="px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap border ${cliCategory === 'ALL' ? 'bg-brand text-on-brand border-brand shadow-sm' : 'bg-surface text-muted border-theme'}">${t('all_categories')}</button>`;
             state.categories.forEach(c => {
-                catHtml += `<button onclick="setCliCategory('${c.id}')" class="px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap border ${cliCategory === c.id ? 'bg-brand text-on-brand border-brand' : 'bg-surface text-muted border-theme'}"><i class="fa-solid ${c.icon} mr-1.5"></i>${getLocalizedField(c, 'name')}</button>`;
+                catHtml += `<button onclick="setCliCategory('${c.id}')" class="px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap border ${cliCategory === c.id ? 'bg-brand text-on-brand border-brand shadow-sm' : 'bg-surface text-muted border-theme'}">${c.emoji || ''} ${getLocalizedField(c, 'name')}</button>`;
             });
             catBar.innerHTML = catHtml;
 
@@ -1891,17 +2340,18 @@
                 if (items.length > 0) {
                     html += `
                         <div class="space-y-3">
-                            <h2 class="text-base font-extrabold text-main border-b border-theme pb-2 flex items-center gap-2">
-                                <i class="fa-solid ${cat.icon} text-brand"></i>
+                            <h2 class="text-base sm:text-lg font-extrabold text-main border-b border-theme pb-2 flex items-center gap-2">
+                                <span>${cat.emoji || ''}</span>
                                 <span>${getLocalizedField(cat, 'name')}</span>
+                                <span class="text-xs font-bold text-muted ml-auto">${items.length}</span>
                             </h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                 ${items.map(p => `
                                     <div onclick="openItemCustomModal('cliente', '${p.id}')" class="bg-surface hover:border-brand border border-theme rounded-2xl p-3.5 flex gap-3.5 cursor-pointer transition-all shadow-sm group">
-                                        <img src="${p.image}" alt="${getLocalizedField(p, 'name')}" onerror="this.src='https://placehold.co/200x200/dc2626/ffffff?text=Burger'" class="w-24 h-24 rounded-xl object-cover flex-shrink-0 bg-subtle">
+                                        <img src="${p.image}" alt="${getLocalizedField(p, 'name')}" onerror="this.src='https://placehold.co/200x200/d91c1c/facc15?text=Sabor+e+Delicias'" class="w-24 h-24 rounded-xl object-cover flex-shrink-0 bg-subtle">
                                         <div class="flex-1 flex flex-col justify-between min-w-0">
                                             <div>
-                                                <h3 class="font-extrabold text-sm text-main group-hover:text-brand transition-colors line-clamp-1">${getLocalizedField(p, 'name')}</h3>
+                                                <h3 class="font-extrabold text-sm text-main group-hover:text-brand transition-colors line-clamp-2 leading-snug">${getLocalizedField(p, 'name')}</h3>
                                                 <p class="text-[11px] text-muted line-clamp-2 mt-1">${getLocalizedField(p, 'desc')}</p>
                                             </div>
                                             <div class="flex items-center justify-between pt-2">
@@ -1917,7 +2367,7 @@
                 }
             });
 
-            container.innerHTML = html;
+            container.innerHTML = html || `<p class="text-center text-sm text-muted py-10">Nenhum item encontrado.</p>`;
             updateCustomerFloatingCart();
         }
 
@@ -2054,19 +2504,17 @@
                 changeFor: troco
             });
 
-            // Salva ID apenas na sessão do próprio cliente
             const myIds = getClientSessionOrderIds();
             myIds.unshift(order.id);
             sessionStorage.setItem(CLIENT_ORDERS_KEY, JSON.stringify(myIds));
 
-            // Mensagem WhatsApp bilíngue
             const isEs = state.lang === 'es';
             let msg = isEs
-                ? `*🍔 NUEVO PEDIDO ${order.code} - ${state.settings.storeName.toUpperCase()}*\n👤 *Cliente:* ${name}\n📞 *WhatsApp:* ${phone}\n🛵 *Modalidad:* ${cliDeliveryType === 'delivery' ? 'Envío' : 'Retiro'}\n`
-                : `*🍔 NOVO PEDIDO ${order.code} - ${state.settings.storeName.toUpperCase()}*\n👤 *Cliente:* ${name}\n📞 *WhatsApp:* ${phone}\n🛵 *Modalidade:* ${cliDeliveryType === 'delivery' ? 'Entrega' : 'Retirada'}\n`;
+                ? `*🥟 NUEVO PEDIDO ${order.code} - ${state.settings.storeName.toUpperCase()}*\n👤 *Cliente:* ${name}\n📞 *WhatsApp:* ${phone}\n🛵 *Modalidad:* ${cliDeliveryType === 'delivery' ? 'Envío a Domicilio' : 'Retiro en Local'}\n`
+                : `*🥟 NOVO PEDIDO ${order.code} - ${state.settings.storeName.toUpperCase()}*\n👤 *Cliente:* ${name}\n📞 *WhatsApp:* ${phone}\n🛵 *Modalidade:* ${cliDeliveryType === 'delivery' ? 'Entrega' : 'Retirada no Local'}\n`;
 
             if (cliDeliveryType === 'delivery') msg += `📍 *${isEs ? 'Dirección' : 'Endereço'}:* ${addr}\n`;
-            msg += `💳 *${isEs ? 'Pago' : 'Pagamento'}:* ${cliPayment}\n--------------------------\n`;
+            msg += `💳 *${isEs ? 'Pago' : 'Pagamento'}:* ${cliPayment}${troco ? ` (Troco p/ ${troco})` : ''}\n--------------------------\n`;
 
             cliCart.forEach(it => {
                 msg += `• *${it.qty}x ${getLocalizedField(it, 'name')}* (${formatBRL(it.unitPrice * it.qty)})\n`;
@@ -2121,7 +2569,7 @@
 
         function copyPixToClipboard() {
             copyTextFallback(state.settings.pixKey);
-            showToast('PIX copiado!');
+            showToast('Chave PIX copiada!');
         }
 
         // =========================================================
@@ -2238,7 +2686,7 @@
             const catEl = document.getElementById('pdv-categories');
             let html = `<button onclick="pdvCategory='ALL'; renderPdvCatalog()" class="px-3 py-1.5 rounded-xl text-xs font-bold border ${pdvCategory === 'ALL' ? 'bg-brand text-on-brand border-brand' : 'bg-surface text-muted border-theme'}">${t('all_categories')}</button>`;
             state.categories.forEach(c => {
-                html += `<button onclick="pdvCategory='${c.id}'; renderPdvCatalog()" class="px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap ${pdvCategory === c.id ? 'bg-brand text-on-brand border-brand' : 'bg-surface text-muted border-theme'}">${getLocalizedField(c, 'name')}</button>`;
+                html += `<button onclick="pdvCategory='${c.id}'; renderPdvCatalog()" class="px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap ${pdvCategory === c.id ? 'bg-brand text-on-brand border-brand' : 'bg-surface text-muted border-theme'}">${c.emoji || ''} ${getLocalizedField(c, 'name')}</button>`;
             });
             catEl.innerHTML = html;
 
@@ -2248,9 +2696,9 @@
             document.getElementById('pdv-products-grid').innerHTML = prods.map(p => `
                 <div class="bg-surface border border-theme rounded-2xl p-3 flex flex-col justify-between gap-2 shadow-sm">
                     <div onclick="openItemCustomModal('pdv', '${p.id}')" class="cursor-pointer flex gap-2.5 items-center">
-                        <img src="${p.image}" alt="" onerror="this.src='https://placehold.co/150x150/dc2626/ffffff?text=Item'" class="w-12 h-12 rounded-xl object-cover bg-subtle">
+                        <img src="${p.image}" alt="" onerror="this.src='https://placehold.co/150x150/d91c1c/facc15?text=Item'" class="w-12 h-12 rounded-xl object-cover bg-subtle">
                         <div class="min-w-0">
-                            <h4 class="font-bold text-xs text-main truncate">${getLocalizedField(p, 'name')}</h4>
+                            <h4 class="font-bold text-xs text-main line-clamp-2 leading-tight">${getLocalizedField(p, 'name')}</h4>
                             <span class="font-mono font-extrabold text-xs text-brand">${formatBRL(p.price)}</span>
                         </div>
                     </div>
@@ -2308,11 +2756,11 @@
                 ? `<p class="text-xs text-muted text-center py-6">Carrinho vazio</p>`
                 : pdvCart.map((it, idx) => `
                     <div class="bg-subtle p-2.5 rounded-xl border border-theme flex items-center justify-between text-xs">
-                        <div>
+                        <div class="pr-2">
                             <strong class="text-main">${it.qty}x ${getLocalizedField(it, 'name')}</strong>
                             ${it.addons.length ? `<span class="block text-[10px] text-muted">+ ${it.addons.join(', ')}</span>` : ''}
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-shrink-0">
                             <span class="font-mono font-bold text-brand">${formatBRL(it.unitPrice * it.qty)}</span>
                             <button onclick="pdvCart.splice(${idx},1); renderPdvCart()" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
                         </div>
@@ -2353,6 +2801,8 @@
             const table = state.tables.find(t => t.number === num);
             if (!table) return;
             if (table.status === 'free') { table.status = 'occupied'; table.openedAt = Date.now(); }
+            const customName = document.getElementById('pdv-mesa-client').value.trim();
+            if (customName) table.customerName = customName;
             pdvCart.forEach(i => table.items.push({ ...i, sentToKitchen: true }));
             const totals = updatePdvTotals();
             const order = createOrderObject({
@@ -2382,13 +2832,17 @@
                 addr = document.getElementById('pdv-del-address').value.trim() || 'Endereço não informado';
             }
 
+            const changeText = (pdvPayment === 'Dinheiro' && document.getElementById('pdv-cash-received').value)
+                ? `Recebido R$ ${document.getElementById('pdv-cash-received').value} (Troco ${document.getElementById('pdv-change-amount').innerText})`
+                : '';
+
             const order = createOrderObject({
                 source: pdvOrderType === 'mesa' ? 'MESA' : pdvOrderType === 'delivery' ? 'DELIVERY' : 'PDV',
                 tableNumber: tableNum, deliveryType: pdvOrderType, customerName: cName,
                 customerPhone: document.getElementById('pdv-del-phone').value.trim(), address: addr,
                 items: pdvCart, subtotal: totals.sub, discount: totals.disc,
                 couponCode: pdvAppliedCoupon ? pdvAppliedCoupon.code : '', deliveryFee: totals.fee,
-                total: totals.tot, paymentMethod: pdvPayment, changeFor: ''
+                total: totals.tot, paymentMethod: pdvPayment, changeFor: changeText
             });
 
             clearPdvCart();
@@ -2437,19 +2891,19 @@
             document.getElementById('table-customer-input').value = tb.customerName || '';
 
             document.getElementById('table-quick-products').innerHTML = state.products.filter(p => p.active).map(p => `
-                <button onclick="openItemCustomModal('table', '${p.id}')" class="flex-shrink-0 bg-subtle border border-theme rounded-xl px-3 py-2 text-left">
-                    <span class="text-xs font-bold text-main block">${getLocalizedField(p, 'name')}</span>
+                <button onclick="openItemCustomModal('table', '${p.id}')" class="flex-shrink-0 bg-subtle border border-theme rounded-xl px-3 py-2 text-left max-w-[170px]">
+                    <span class="text-xs font-bold text-main block truncate">${getLocalizedField(p, 'name')}</span>
                     <span class="font-mono text-[11px] text-brand font-bold">${formatBRL(p.price)}</span>
                 </button>
             `).join('');
 
             document.getElementById('table-items-list').innerHTML = tb.items.map((it, idx) => `
                 <div class="bg-subtle p-2.5 rounded-xl border border-theme flex justify-between items-center text-xs">
-                    <div>
+                    <div class="pr-2">
                         <strong class="text-main">${it.qty}x ${getLocalizedField(it, 'name')}</strong>
                         <span class="ml-2 text-[10px] px-1.5 py-0.5 rounded ${it.sentToKitchen ? 'bg-emerald-500/15 text-emerald-600' : 'bg-amber-500/15 text-amber-600'}">${it.sentToKitchen ? 'OK' : 'Novo'}</span>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-shrink-0">
                         <span class="font-mono font-bold text-main">${formatBRL(it.unitPrice * it.qty)}</span>
                         <button onclick="tbRemoveItem(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -2527,7 +2981,7 @@
                     const mins = Math.floor((Date.now() - o.createdAt) / 60000);
                     const isLate = mins >= 15 && st !== 'ready';
                     let nextBtn = '';
-                    if (st === 'new') nextBtn = `<button onclick="advanceOrderStatus('${o.id}','preparing')" class="flex-1 bg-amber-500 text-white font-bold py-2 rounded-xl text-xs">${t('start_prep')}</button>`;
+                    if (st === 'new') nextBtn = `<button onclick="advanceOrderStatus('${o.id}','preparing')" class="flex-1 bg-amber-500 text-neutral-950 font-extrabold py-2 rounded-xl text-xs">${t('start_prep')}</button>`;
                     if (st === 'preparing') nextBtn = `<button onclick="advanceOrderStatus('${o.id}','ready')" class="flex-1 bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs">${t('mark_ready')}</button>`;
                     if (st === 'ready') nextBtn = `<button onclick="advanceOrderStatus('${o.id}','completed')" class="flex-1 bg-slate-700 text-white font-bold py-2 rounded-xl text-xs">${t('archive_done')}</button>`;
 
@@ -2552,14 +3006,26 @@
                                     </div>
                                 `).join('')}
                             </div>
-                            <div class="flex gap-2">
-                                <button onclick="reprintOrderById('${o.id}')" class="px-3 py-2 rounded-xl bg-surface border border-theme text-xs font-bold text-main"><i class="fa-solid fa-print"></i> 80mm</button>
+                            <div class="flex gap-1.5">
+                                <button onclick="reprintOrderById('${o.id}')" class="px-2.5 py-2 rounded-xl bg-surface border border-theme text-xs font-bold text-main"><i class="fa-solid fa-print"></i> 80mm</button>
+                                ${o.customerPhone ? `<button onclick="notifyCustomerWhatsApp('${o.id}')" class="px-2.5 py-2 rounded-xl bg-emerald-600/15 text-emerald-600 text-xs font-bold"><i class="fa-brands fa-whatsapp"></i></button>` : ''}
                                 ${nextBtn}
                             </div>
                         </div>
                     `;
                 }).join('') || `<p class="text-xs text-muted text-center py-6">---</p>`;
             });
+        }
+
+        function notifyCustomerWhatsApp(id) {
+            const o = state.orders.find(x => x.id === id);
+            if (!o || !o.customerPhone) return;
+            const phone = o.customerPhone.replace(/\D/g, '');
+            const fullPhone = phone.startsWith('55') ? phone : '55' + phone;
+            const msg = state.lang === 'es'
+                ? `¡Hola ${o.customerName}! Tu pedido *${o.code}* en *${state.settings.storeName}* está ${t('status_' + o.status).toLowerCase()}. 🥟🍔`
+                : `Olá ${o.customerName}! Seu pedido *${o.code}* na *${state.settings.storeName}* está ${t('status_' + o.status).toLowerCase()}. 🥟🍔`;
+            window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function advanceOrderStatus(id, st) {
@@ -2643,6 +3109,7 @@
                         <span>TOTAL:</span><span>${formatBRL(order.total)}</span>
                     </div>
                     <div style="font-size:12px;"><strong>Pagamento:</strong> ${order.paymentMethod}</div>
+                    ${order.changeFor ? `<div style="font-size:11px;">${order.changeFor}</div>` : ''}
                 </div>
             `;
 
@@ -2666,7 +3133,7 @@
                 return `
                     <div class="bg-surface border border-theme rounded-2xl p-3.5 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
-                            <img src="${p.image}" alt="" onerror="this.src='https://placehold.co/120x120/dc2626/ffffff?text=Item'" class="w-14 h-14 rounded-xl object-cover bg-subtle">
+                            <img src="${p.image}" alt="" onerror="this.src='https://placehold.co/120x120/d91c1c/facc15?text=Item'" class="w-14 h-14 rounded-xl object-cover bg-subtle">
                             <div class="min-w-0">
                                 <strong class="text-xs text-main block truncate">🇧🇷 ${p.name_pt}</strong>
                                 <span class="text-[11px] text-muted block truncate">🇪🇸 ${p.name_es}</span>
@@ -2674,7 +3141,7 @@
                                 <span class="text-[10px] font-bold text-emerald-600 ml-2">Margem: ${margin}%</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
                             <button onclick="toggleProdActive('${p.id}')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${p.active ? 'bg-emerald-500/15 text-emerald-600' : 'bg-red-500/15 text-red-600'}">
                                 ${p.active ? 'Ativo' : 'Pausado'}
                             </button>
@@ -2687,7 +3154,8 @@
             document.getElementById('mgmt-addons-list').innerHTML = state.addons.map(a => `
                 <div class="bg-subtle border border-theme rounded-xl p-3 flex items-center justify-between text-xs">
                     <div>
-                        <strong class="text-main block">🇧🇷 ${a.name_pt} / 🇪🇸 ${a.name_es}</strong>
+                        <strong class="text-main block">🇧🇷 ${a.name_pt}</strong>
+                        <span class="text-[11px] text-muted block">🇪🇸 ${a.name_es}</span>
                         <span class="font-mono text-brand font-bold">+ ${formatBRL(a.price)}</span>
                     </div>
                     <button onclick="state.addons = state.addons.filter(x => x.id !== '${a.id}'); saveState()" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
@@ -2711,7 +3179,7 @@
             document.getElementById('edit-prod-cat').value = p ? p.category : state.categories[0].id;
             document.getElementById('edit-prod-price').value = p ? p.price : '';
             document.getElementById('edit-prod-cost').value = p ? p.cost : '';
-            document.getElementById('edit-prod-image').value = p ? p.image : 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80';
+            document.getElementById('edit-prod-image').value = p ? p.image : 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80';
             document.getElementById('edit-prod-desc-pt').value = p ? p.desc_pt : '';
             document.getElementById('edit-prod-desc-es').value = p ? p.desc_es : '';
             openModal('modal-product-editor');
@@ -2726,7 +3194,7 @@
                 category: document.getElementById('edit-prod-cat').value,
                 price: parseFloat(document.getElementById('edit-prod-price').value) || 0,
                 cost: parseFloat(document.getElementById('edit-prod-cost').value) || 0,
-                image: document.getElementById('edit-prod-image').value.trim() || 'https://placehold.co/400x300/dc2626/ffffff?text=Burger',
+                image: document.getElementById('edit-prod-image').value.trim() || 'https://placehold.co/400x300/d91c1c/facc15?text=Sabor+e+Delicias',
                 desc_pt: document.getElementById('edit-prod-desc-pt').value.trim(),
                 desc_es: document.getElementById('edit-prod-desc-es').value.trim(),
                 addonIds: state.addons.map(a => a.id)
@@ -2800,8 +3268,8 @@
 
             const baseUrl = window.location.href.split('#')[0] + '#cliente';
             document.getElementById('campaign-message-box').value = state.lang === 'es'
-                ? `🔥 *¡HOY HAY PROMO EN ${state.settings.storeName.toUpperCase()}!* 🍔\nPide directo en nuestro menú digital:\n👉 ${baseUrl}`
-                : `🔥 *HOJE TEM PROMO NA ${state.settings.storeName.toUpperCase()}!* 🍔\nPeça direto no nosso cardápio digital:\n👉 ${baseUrl}`;
+                ? `🇻🇪 *¡AUTÉNTICO SABOR VENEZOLANO EN ${state.settings.storeName.toUpperCase()}!* 🥟🍔\nEmpanadas, Pasteles Fritos y Hamburguesas artesanales. Pide directo aquí:\n👉 ${baseUrl}`
+                : `🇻🇪 *COMIDAS COM SABOR VENEZOLANO NA ${state.settings.storeName.toUpperCase()}!* 🥟🍔\nEmpanadas, Pastéis Fritos e Hambúrgueres artesanais! Use o cupom *SABOR10* no nosso cardápio digital:\n👉 ${baseUrl}`;
 
             const qrTargets = [
                 { label: 'Cardápio Delivery', url: baseUrl },
@@ -2837,7 +3305,7 @@
 
         function copyCampaignText() {
             copyTextFallback(document.getElementById('campaign-message-box').value);
-            showToast('Copiado!');
+            showToast('Mensagem copiada!');
         }
 
         function openCampaignWhatsApp() {
@@ -2876,7 +3344,7 @@
             const csv = rows.map(r => r.join(';')).join('\n');
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }));
-            a.download = 'vendas-lanchonete.csv';
+            a.download = 'vendas-sabor-e-delicias.csv';
             a.click();
         }
 
